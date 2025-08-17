@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     // Set mandatory initialization classes
     runManager->SetUserInitialization(new DetectorConstruction);
     runManager->SetUserInitialization(new PhysicsList);
-    runManager->SetUserInitialization(new ActionInitializer);
+    runManager->SetUserInitialization(new ActionInitialization);
     
     // Initialize G4 kernel
     runManager->Initialize();

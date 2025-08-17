@@ -1,9 +1,6 @@
-//=============================================================================
-// DetectorConstruction.cc - Implementation of detector geometry
-//=============================================================================
-
 #include "DetectorConstruction.hh"
-
+#include "ScintillatorSD.hh"
+#include "G4SDManager.hh""
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -24,34 +21,65 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     // Get materials from NIST database
     G4NistManager *nist = G4NistManager::Instance();
 
-    // Define world material (air)
+    // Define world material (air) with optical properties
     G4Material *world_mat = nist->FindOrBuildMaterial("G4_AIR");
+
+    // Add optical properties to air for optical photon transport
+    G4MaterialPropertiesTable* airMPT = new G4MaterialPropertiesTable();
+
+    const G4int NUM = 10;
+    G4double photonEnergy[NUM] = {
+        1.5*eV, 2.0*eV, 2.2*eV, 2.4*eV, 2.6*eV,
+        2.8*eV, 3.0*eV, 3.2*eV, 3.4*eV, 3.6*eV
+    };
+
+    G4double rindexAir[NUM];
+    G4double absorptionAir[NUM];
+
+    for(int i = 0; i < NUM; i++) {
+        rindexAir[i] = 1.000293;     // Refractive index of air at STP
+        absorptionAir[i] = 10.*m;    // Long absorption length in air
+    }
+
+    airMPT->AddProperty("RINDEX", photonEnergy, rindexAir, NUM);
+    airMPT->AddProperty("ABSLENGTH", photonEnergy, absorptionAir, NUM);
+
+    world_mat->SetMaterialPropertiesTable(airMPT);
+
 
     // Define scintillator material (NaI with Tl doping)
     G4Material *scint_mat = nist->FindOrBuildMaterial("G4_SODIUM_IODIDE");
     G4MaterialPropertiesTable* scintMPT = new G4MaterialPropertiesTable();
 
-    // Example photon energy range (2–3.5 eV ~ 350–620 nm)
-    const G4int NUM = 2;
-    G4double photonEnergy[NUM]    = {2.0*eV, 3.5*eV};
     G4double rindexNaI[NUM]       = {1.85, 1.85};
     G4double absorption[NUM]      = {0.5*m, 0.5*m};
+    G4double scintillation[NUM];
+
+    for(int i = 0; i < NUM; i++) {
+        rindexNaI[i] = 1.85;        // Constant refractive index
+        absorption[i] = 50.*cm;      // Absorption length
+        scintillation[i] = 1.0;      // Relative scintillation intensity
+    }
+    // Peak emission around 415 nm (3.0 eV) for NaI:Tl
+    scintillation[6] = 1.0;  // Peak at 3.0 eV
+
+
 
     scintMPT->AddProperty("RINDEX", photonEnergy, rindexNaI, NUM);
     scintMPT->AddProperty("ABSLENGTH", photonEnergy, absorption, NUM);
-    // scintMPT->AddConstProperty("SCINTILLATIONYIELD", 100./MeV);
-
+    scintMPT->AddProperty("SCINTILLATIONCOMPONENT1", photonEnergy, scintillation, NUM);
 
     // Light yield ~38k photons/MeV for NaI:Tl
-    scintMPT->AddConstProperty("SCINTILLATIONYIELD", 38000./MeV);
+    scintMPT->AddConstProperty("SCINTILLATIONYIELD", 50./MeV);
     scintMPT->AddConstProperty("RESOLUTIONSCALE", 1.0);
     scintMPT->AddConstProperty("SCINTILLATIONTIMECONSTANT1", 230.*ns);
-    scintMPT->AddConstProperty("SCINTILLATIONYIELD1", 1.0);
+    // scintMPT->AddConstProperty("SCINTILLATIONYIELD1", 1.0/MeV);
 
     scint_mat->SetMaterialPropertiesTable(scintMPT);
 
+
     // World dimensions
-    G4double world_size = 1.0 * m;
+    G4double world_size = 2.0 * m;
 
     // Scintillator dimensions
     G4double scint_sizeX = 5.0 * cm;
@@ -84,6 +112,11 @@ G4VPhysicalVolume *DetectorConstruction::Construct() {
     G4LogicalVolume *logicScintillator = new G4LogicalVolume(solidScintillator,
                                                              scint_mat,
                                                              "Scintillator");
+    // Register sensitive detector
+    G4SDManager* SDManager = G4SDManager::GetSDMpointer();
+    ScintillatorSD* scintSD = new ScintillatorSD("ScintillatorSD");
+    SDManager->AddNewDetector(scintSD);
+    logicScintillator->SetSensitiveDetector(scintSD);
 
     // Place scintillator at the center of the world
     new G4PVPlacement(0, // no rotation

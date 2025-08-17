@@ -1,48 +1,35 @@
-//=============================================================================
-// ActionInitializer.cc - Implementation of action initialization
-//=============================================================================
 
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
+#include "EventAction.hh"       // Add this
+#include "SteppingAction.hh"
+#include "G4RunManager.hh"
 
-// Include other action classes here when they are added:
-// #include "RunAction.hh"
-// #include "EventAction.hh"
-// #include "SteppingAction.hh"
+ActionInitialization::ActionInitialization()
+ : G4VUserActionInitialization()
+{}
 
-ActionInitializer::ActionInitializer()
-: G4VUserActionInitialization()
+ActionInitialization::~ActionInitialization()
+{}
+
+void ActionInitialization::BuildForMaster() const
 {
+    // Master thread actions (for data merging if needed)
+    // SetUserAction(new RunAction);
 }
 
-ActionInitializer::~ActionInitializer()
+void ActionInitialization::Build() const
 {
-}
-
-void ActionInitializer::BuildForMaster() const
-{
-    // Actions for master thread (for multi-threaded mode)
-    // Only RunAction should be instantiated for the master thread
-    // SetUserAction(new RunAction(true)); // true indicates master thread
-
-    // For now, we don't have RunAction implemented yet
-    // This will be added when we implement hit collection and analysis
-}
-
-void ActionInitializer::Build() const
-{
-    // Actions for worker threads (and sequential mode)
-
-    // Primary generator is mandatory
+    // Set primary generator
     SetUserAction(new PrimaryGeneratorAction);
 
-    // Add other actions here as needed:
-    // SetUserAction(new RunAction(false)); // false indicates worker thread
-    // SetUserAction(new EventAction);
-    // SetUserAction(new SteppingAction);
-    // SetUserAction(new StackingAction);
-    // SetUserAction(new TrackingAction);
+    // Set event action for per-event data collection
+    EventAction* eventAction = new EventAction;
+    SetUserAction(eventAction);
 
-    // Note: In multithreaded mode, each worker thread gets its own instance
-    // of these actions. Thread-local data should be used for accumulation.
+    // Set stepping action (pass event action for data accumulation)
+    // SetUserAction(new SteppingAction(eventAction));
+
+    // Add other user actions here as needed
+    // SetUserAction(new RunAction);
 }

@@ -8,11 +8,11 @@
 #include "G4VUserActionInitialization.hh"
 #include "globals.hh"
 
-class ActionInitializer : public G4VUserActionInitialization
+class ActionInitialization : public G4VUserActionInitialization
 {
 public:
-    ActionInitializer();
-    virtual ~ActionInitializer();
+    ActionInitialization();
+    virtual ~ActionInitialization();
 
     virtual void BuildForMaster() const override;
     virtual void Build() const override;

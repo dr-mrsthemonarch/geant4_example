@@ -26,7 +26,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fParticleGun->SetParticleDefinition(particle);
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
     fParticleGun->SetParticleEnergy(662.*keV);  // Cs-137 gamma energy
-    fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -50.*cm));
+    fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., -100.*cm));
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()

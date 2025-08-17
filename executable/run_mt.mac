@@ -1,0 +1,31 @@
+# Macro file for defining a GUI with Qt
+# Note: These commands only work with Qt GUI in interactive mode
+
+# First check what session type we have
+/gui/nativeMenuBar false
+
+# Try to add menus only if we're in a proper Qt session
+# Note: If these fail, it means GUI commands are not available
+
+# Add simulation menu and buttons
+/gui/addMenu simulation
+/gui/addButton simulation "Beam on 1" "/run/beamOn 1"
+/gui/addButton simulation "Beam on 10" "/run/beamOn 10"
+/gui/addButton simulation "Beam on 100" "/run/beamOn 100"
+
+# Add view menu and buttons
+/gui/addMenu view
+/gui/addButton view "Refresh" "/vis/viewer/refresh"
+/gui/addButton view "Clear tracks" "/vis/scene/endOfEventAction accumulate 0"
+/gui/addButton view "Show tracks" "/vis/scene/endOfEventAction accumulate 10"
+
+# Add some useful visualization commands
+/gui/addMenu vis
+/gui/addButton vis "Wireframe" "/vis/viewer/set/style wireframe"
+/gui/addButton vis "Surface" "/vis/viewer/set/style surface"
+/gui/addButton vis "Reset view" "/vis/viewer/reset"
+
+# Add help menu
+/gui/addMenu help
+/gui/addButton help "Available commands" "/control/manual"
+/gui/addButton help "Exit" "exit"

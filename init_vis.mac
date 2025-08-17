@@ -1,0 +1,32 @@
+# Macro file for the initialization of visualization
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+
+# Initialize kernel
+/run/initialize
+
+# Visualization setting - try OpenGL first as it's more stable
+/vis/open OGLIQt 600x600-0+0
+/vis/drawVolume
+/vis/viewer/set/autoRefresh false
+
+# Add trajectories to the same scene
+/vis/scene/add/trajectories smooth
+/tracking/storeTrajectory 2
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/set -1 blue
+/vis/modeling/trajectories/drawByCharge-0/set 1 red
+/vis/modeling/trajectories/drawByCharge-0/set 0 green
+
+# Add coordinate axes
+/vis/scene/add/axes 0 0 0 50 cm
+
+# Set accumulation and view properties
+/vis/scene/endOfEventAction accumulate 10
+/vis/viewer/set/style surface
+/vis/viewer/set/hiddenMarker true
+/vis/viewer/set/viewpointThetaPhi 20 60
+/vis/viewer/zoom 1.4
+/vis/viewer/set/autoRefresh true
+/vis/scene/endOfEventAction accumulate -1

@@ -1,0 +1,15 @@
+# Example macro for running simulation
+/run/numberOfThreads 4
+/run/initialize
+
+# Set particle source parameters
+/gun/particle gamma
+/gun/energy 662 keV
+/gun/position 0 0 -50 cm
+/gun/direction 0 0 1
+
+# Print progress every 1000 events
+/run/printProgress 1000
+
+# Run events
+/run/beamOn 10000

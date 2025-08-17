@@ -1,0 +1,22 @@
+# Multithreaded simulation macro
+/run/numberOfThreads 8
+
+# Initialize the run manager
+/run/initialize
+
+# Verbose settings (be careful with verbose in MT mode)
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+# Set particle source parameters
+/gun/particle gamma
+/gun/energy 662 keV
+/gun/position 0 0 -50 cm
+/gun/direction 0 0 1
+
+# Print progress every 10000 events
+/run/printProgress 10000
+
+# Run a large number of events for good statistics
+/run/beamOn 100000

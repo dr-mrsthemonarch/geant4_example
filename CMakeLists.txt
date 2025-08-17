@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set Geant4_DIR for custom installation
 if(NOT DEFINED Geant4_DIR)
-    set(Geant4_DIR "/Users/morbo/CLionProjects/libraries/geant4/geant4_v11/geant4_v11_install/lib/cmake/Geant4")
+    set(Geant4_DIR "~/CLionProjects/libraries/geant4/geant4_v11/geant4_v11_install/lib/cmake/Geant4")
 endif()
 
 # Set MacPorts paths for dependencies
